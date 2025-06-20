@@ -17,7 +17,7 @@ To compile the program, use the following command:
 #-> (bash)
 make
 
-# fill in <input file> and <output file> with specefied files
+# fill in <input file> and <output file> with specified files
 /.Lex <input file> <output file>
 
 # -> or to run with the directory's tests with permisions chmod +x
