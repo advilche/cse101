@@ -20,7 +20,7 @@ make
 # fill in <input file> and <output file> with specified files
 /.Lex <input file> <output file>
 
-# -> or to run with the directory's tests with permisions chmod +x
+# -> or to run with the directory's tests with permissions chmod +x
 ./../cse-101-public-tests/pa1/pa1.sh
 
 # EXAMPLE
