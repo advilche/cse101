@@ -276,7 +276,6 @@ Matrix scalarMult(double x, Matrix A){
 
 }
 
-
 Matrix sum(Matrix A, Matrix B){
 	if(A->size != B->size){
 		fprintf(stderr, "Matrix error: calling sum on matrices sizes that do not match\n");
