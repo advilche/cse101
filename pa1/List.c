@@ -75,7 +75,7 @@ int length(List L){
 	return L->length;
 }
 
-int index(List L){
+int getIndex(List L){
 	if(L == NULL){
                 fprintf(stderr, "List error: calling index() on NULL List element\n");
         	exit(EXIT_FAILURE);

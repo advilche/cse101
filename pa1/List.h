@@ -20,7 +20,7 @@ void freeList(List* pL); // Frees all heap memory associated with *pL, and sets 
 
 // Access functions -----------------------------------------------------------
 int length(List L); // Returns the number of elements in L.
-int index(List L); // Returns index of cursor element if defined, -1 otherwise.
+int getIndex(List L); // Returns index of cursor element if defined, -1 otherwise.
 int front(List L); // Returns front element of L. Pre: length()>0
 int back(List L); // Returns back element of L. Pre: length()>0
 int get(List L); // Returns cursor element of L. Pre: length()>0, index()>=0

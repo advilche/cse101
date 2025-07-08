@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
         int insertIndex = 0;
         moveFront(indexList);
         
-        while (index(indexList) >= 0) {
+        while (getIndex(indexList) >= 0) {
             int currentIndex = get(indexList);
             if (strcmp(lines[i], lines[currentIndex]) < 0) {
                 break;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     }
 
     moveFront(indexList);
-    while (index(indexList) >= 0) {
+    while (getIndex(indexList) >= 0) {
         int lineIndex = get(indexList);
         fprintf(outputFile, "%s\n", lines[lineIndex]);
         moveNext(indexList);
