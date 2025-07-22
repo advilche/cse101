@@ -40,6 +40,10 @@ int equals(Matrix A, Matrix B);
 
 // Manipulation procedures --------------------------------------------
 
+// sigmoidf
+// Puts values through sigmoid function
+void sigmoid(Matrix M);
+
 // makeZero()
 // Re-sets M to the zero Matrix state.
 void makeZero(Matrix M);

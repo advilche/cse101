@@ -5,8 +5,8 @@
 #include "List.h"
 #include "Matrix.h"
 
-typedef struct EntryObj* Entry;
-typedef struct MatrixObj* Matrix;
+//typedef struct EntryObj* Entry;
+//typedef struct MatrixObj* Matrix;
 
 typedef struct EntryObj {
     int column;
@@ -68,7 +68,6 @@ double vectorDot(List P, List Q) {
     return total;
 }
 
-
 Matrix newMatrix(int n){
 	Matrix newMatrix = malloc(sizeof(MatrixObj));
 	
@@ -79,7 +78,6 @@ Matrix newMatrix(int n){
 	for (int i = 1; i <= n; i++) {
         	newMatrix->rows[i] = newList();
     	}
-
 
 	return newMatrix;	
 }
@@ -161,7 +159,6 @@ int equals(Matrix A, Matrix B){
 	return 1;
 }
 
-// Manipulation procedures
 
 void makeZero(Matrix M){
 	for (int i = 1; i <= M->size; i++) {
@@ -232,6 +229,7 @@ Matrix copy(Matrix A){
 	C->NNZ = A->NNZ;
     	return C;
 }
+
 
 Matrix transpose(Matrix A){
 	Matrix MT = newMatrix(A->size);
@@ -383,8 +381,7 @@ Matrix diff(Matrix A, Matrix B){
 }
 
 
-Matrix product(Matrix A, Matrix B){
-	
+Matrix product(Matrix A, Matrix B){	
 	Matrix P = newMatrix(A->size);
  	Matrix T = transpose(B);
     

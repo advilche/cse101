@@ -4,10 +4,9 @@
 #include <stdbool.h>
 
 
-
 #include "List.h"
 
-typedef struct NodeObj* Node;
+//typedef struct NodeObj* Node;
 
 typedef struct NodeObj{
    void* data;
