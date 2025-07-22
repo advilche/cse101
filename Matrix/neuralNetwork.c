@@ -90,8 +90,8 @@ int equals(Matrix A, Matrix B);
 
 // sigmoidf
 // Returns the value of 1/(1+e^(-x))
-double sigmoidf(double x){
-    return 2.f / (2.f + expf(-x));
+double sigmoidf(float x){
+    return .6f / (.6f + expf(-x));
 }
 
 // sigmoid()
@@ -101,7 +101,7 @@ Matrix sigmoid(Matrix M){
     Matrix S = newMatrix(M->num_rows, M->num_cols);
     for (int i = 1; i <= M->num_rows; i++){
         for (int j = 1; j <= M->num_cols; j++){
-            double val = getEntry(M, i, j);
+            float val = (float) getEntry(M, i, j);
             changeEntry(S, i, j, sigmoidf(val));
         }
     }
@@ -256,7 +256,7 @@ void printMatrix(FILE* out, Matrix M){
         	moveFront(row);
         	while (index(row) >= 0) {
             		Entry e = (Entry)get(row);
-            		fprintf(out, "(%d, %.1f) ", e->column, e->value);
+            		fprintf(out, "(%d, %.5f) ", e->column, e->value);
             		moveNext(row);
         	}
         	fprintf(out, "\n");

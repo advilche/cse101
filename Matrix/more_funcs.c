@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "Matrix.h"
 #include "List.h"
+
 
 typedef struct EntryObj {
     int column;
@@ -68,6 +70,8 @@ int main(int argc, char *argv[]){
     fprintf(out, "\nS:");
     fprintf(out, "\n");
     printMatrix(out, S);
+
+    printf("%.6f\n", 1/(1 + expf(-1.0)));
 
     Matrix Sig = sigmoid(A);
     fprintf(out, "\nSig:");
