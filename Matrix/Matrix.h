@@ -42,7 +42,7 @@ int equals(Matrix A, Matrix B);
 
 // sigmoidf
 // Puts values through sigmoid function
-void sigmoid(Matrix M);
+Matrix sigmoid(Matrix M);
 
 // makeZero()
 // Re-sets M to the zero Matrix state.

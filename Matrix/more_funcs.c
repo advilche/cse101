@@ -47,21 +47,32 @@ int main(int argc, char *argv[]){
         changeEntry(B, row, col, value);
     }
 
+    fprintf(out, "A:\n");
     printMatrix(out, A);
-    fprintf(out, "\n");
+
+    fprintf(out, "\nB:\n");
     printMatrix(out, B);
 
-    double val = getEntry(B, 2, 2);
+    Matrix B_T = transpose(B);
 
-    List tempListA = getRow(A, 1);
-    List tempListB = getRow(B, 1);
-    
-    List tempListBx1 = getColRow(B, 3);
-    moveFront(tempListBx1);
-    
+    fprintf(out, "\nB_T:\n");
+    printMatrix(out, B_T);
+
+    Matrix C = product(A, B_T);
+
+    fprintf(out, "\nC:");
     fprintf(out, "\n");
+    printMatrix(out, C);
 
-    fprintf(out, "%.1f", vectorDot(tempListBx1, tempListA));
+    Matrix S = scalarMult(10, A);
+    fprintf(out, "\nS:");
+    fprintf(out, "\n");
+    printMatrix(out, S);
+
+    Matrix Sig = sigmoid(A);
+    fprintf(out, "\nSig:");
+    fprintf(out, "\n");
+    printMatrix(out, Sig);
 
     return 0;
 }

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "List.h"
 #include "Matrix.h"
@@ -88,8 +89,25 @@ int equals(Matrix A, Matrix B);
 // Manipulation procedures --------------------------------------------
 
 // sigmoidf
-// Puts values through sigmoid function
-void sigmoid(Matrix M);
+// Returns the value of 1/(1+e^(-x))
+double sigmoidf(double x){
+    return 2.f / (2.f + expf(-x));
+}
+
+// sigmoid()
+// Returns a reference to a new Matrix object representing the sigmoid
+// of M
+Matrix sigmoid(Matrix M){
+    Matrix S = newMatrix(M->num_rows, M->num_cols);
+    for (int i = 1; i <= M->num_rows; i++){
+        for (int j = 1; j <= M->num_cols; j++){
+            double val = getEntry(M, i, j);
+            changeEntry(S, i, j, sigmoidf(val));
+        }
+    }
+
+    return S;
+}
 
 // makeZero()
 // Re-sets M to the zero Matrix state.
@@ -156,11 +174,38 @@ Matrix copy(Matrix A);
 // transpose()
 // Returns a reference to a new Matrix object representing the transpose
 // of A.
-Matrix transpose(Matrix A);
+Matrix transpose(Matrix A){
+    Matrix M = newMatrix(A->num_cols, A->num_rows);
+
+    for (int i = 1; i <= A->num_rows; i++) {
+        List tempList = A->rows[i];
+        moveFront(tempList);
+
+        while (index(tempList) >= 0) {
+            Entry tempE = (Entry)get(tempList);
+            
+            changeEntry(M, tempE->column, i, tempE->value);
+            moveNext(tempList);
+        }
+    }
+
+    return M;
+}
 
 // scalarMult()
 // Returns a reference to a new Matrix object representing xA.
-Matrix scalarMult(double x, Matrix A);
+Matrix scalarMult(double x, Matrix A){
+    Matrix S = newMatrix(A->num_rows, A->num_cols);
+
+    for (int i = 1; i <= A->num_rows; i++){
+        for (int j = 1; j <= A->num_cols; j++){
+            double eVal = getEntry(A, i, j);
+            changeEntry(S, i, j, eVal * x);
+        }
+    }
+
+    return S;
+}
 
 // sum()
 // Returns a reference to a new Matrix object representing A+B.
@@ -174,8 +219,25 @@ Matrix diff(Matrix A, Matrix B);
 
 // product()
 // Returns a reference to a new Matrix object representing AB
-// pre: size(A)==size(B)
-Matrix product(Matrix A, Matrix B);
+// pre: size(A->cols)==size(B->rows)
+Matrix product(Matrix A, Matrix B){
+    if (A->num_cols != B->num_rows){
+        fprintf(stderr, "product: invalid shape (%d, %d)\n", A->num_cols, B->num_rows);
+    }
+
+    Matrix P = newMatrix(A->num_rows, B->num_cols);
+    for (int i = 1; i <= A->num_rows; i++){
+        for (int j = 1; j <= B->num_cols; j++){
+            List rowiA = A->rows[i];
+            List coljB = getColRow(B, j);
+            double dotProd = vectorDot(rowiA, coljB);
+            changeEntry(P, i, j, dotProd);
+        }
+    }
+
+    return P;
+}
+
 
 // printMatrix()
 // Prints a string representation of Matrix M to filestream out. Zero rows
