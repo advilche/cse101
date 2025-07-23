@@ -8,6 +8,7 @@
 
 //typedef struct EntryObj* Entry;
 //typedef struct MatrixObj* Matrix;
+//typedef struct NeuralNetwork* NerualNetwork;
 
 typedef struct EntryObj {
     int column;
@@ -21,12 +22,11 @@ typedef struct MatrixObj {
     List* rows;
 } MatrixObj;
 
-/*
 typedef struct NeuralNetworkObj {
     int inputLayer;
-    int* hiddenLayers[];
-    int 
-}*/
+    int* hiddenLayers;
+    int outputlayer;
+} NeuralNetworkObj;
 
 Entry newEntry(int col, double value) {
     	Entry newEntry = malloc(sizeof(EntryObj));

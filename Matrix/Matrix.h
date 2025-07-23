@@ -13,6 +13,7 @@
 
 typedef struct EntryObj* Entry;
 typedef struct MatrixObj* Matrix;
+typedef struct NeuralNetwork* NerualNetwork;
 
 // --------------------------------------------------------------------
 
