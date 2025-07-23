@@ -58,6 +58,8 @@ void changeEntry(Matrix M, int i, int j, double x);
 // Returns a reference to a new Matrix object having the same entries as A.
 Matrix copy(Matrix A);
 
+int isInteger(float num);
+
 // transpose()
 // Returns a reference to a new Matrix object representing the transpose
 // of A.

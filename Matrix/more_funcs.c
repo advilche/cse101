@@ -32,51 +32,34 @@ int main(int argc, char *argv[]){
     printf("%d, %d, %d, %d, %d, %d\n", m, n, m1, n1, a, b);
 
     // Create matrices A & B
-    Matrix A = newMatrix(m, n);
-    Matrix B = newMatrix(m1, n1);
+    Matrix I = newMatrix(m, n);
+    Matrix W1 = newMatrix(m1, n1);
 
     for (int i = 0; i < a; i++) {
         int row, col;
         double value;
         fscanf(in, "%d %d %lf", &row, &col, &value);
-        changeEntry(A, row, col, value);
+        changeEntry(I, row, col, value);
     }
 
     for (int i = 0; i < b; i++) {
         int row, col;
         double value;
         fscanf(in, "%d %d %lf", &row, &col, &value);
-        changeEntry(B, row, col, value);
+        changeEntry(W1, row, col, value);
     }
 
-    fprintf(out, "A:\n");
-    printMatrix(out, A);
-
-    fprintf(out, "\nB:\n");
-    printMatrix(out, B);
-
-    Matrix B_T = transpose(B);
-
-    fprintf(out, "\nB_T:\n");
-    printMatrix(out, B_T);
-
-    Matrix C = product(A, B_T);
-
-    fprintf(out, "\nC:");
+    printMatrix(out, I);
     fprintf(out, "\n");
-    printMatrix(out, C);
 
-    Matrix S = scalarMult(10, A);
-    fprintf(out, "\nS:");
+    printMatrix(out, W1);
     fprintf(out, "\n");
-    printMatrix(out, S);
 
-    printf("%.6f\n", 1/(1 + expf(-1.0)));
-
-    Matrix Sig = sigmoid(A);
-    fprintf(out, "\nSig:");
+    Matrix H0 = product(I, W1);
+    Matrix H1 = sigmoid(H0);
+    
+    printMatrix(out, H1);
     fprintf(out, "\n");
-    printMatrix(out, Sig);
 
     return 0;
 }
