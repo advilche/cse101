@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
 
 #include "Matrix.h"
 #include "List.h"
 
-int main(int argc, char* argv[]) {
+typedef struct EntryObj {
+    int column;
+    double value;
+} EntryObj;
+
+int main(int argc, char *argv[]){
     // Ensure proper number of arguments
     if (argc != 3) {
         printf("Usage: %s <inputfile> <outputfile>\n", argv[0]);
@@ -20,93 +25,41 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int n, a, b;
-    fscanf(in, "%d %d %d", &n, &a, &b);
+    int m, n, m1, n1, a, b;
 
-    // Create matrices A and B
-    Matrix A = newMatrix(n);
-    Matrix B = newMatrix(n);
+    fscanf(in, "%d %d %d %d %d %d", &m, &n, &m1, &n1, &a, &b);
+    printf("%d, %d, %d, %d, %d, %d\n", m, n, m1, n1, a, b);
 
-    // Read matrix A
+    // Create matrices A & B
+    Matrix I = newMatrix(m, n);
+    Matrix W1 = newMatrix(m1, n1);
+
     for (int i = 0; i < a; i++) {
         int row, col;
         double value;
         fscanf(in, "%d %d %lf", &row, &col, &value);
-        changeEntry(A, row, col, value);
+        changeEntry(I, row, col, value);
     }
 
-    // Read matrix B
     for (int i = 0; i < b; i++) {
         int row, col;
         double value;
         fscanf(in, "%d %d %lf", &row, &col, &value);
-        changeEntry(B, row, col, value);
+        changeEntry(W1, row, col, value);
     }
 
-    // Print matrix A and B
-    fprintf(out, "A has %d non-zero entries:\n", NNZ(A));
-    printMatrix(out, A);
+    printMatrix(out, I);
+    fprintf(out, "\n");
 
-    fprintf(out, "B has %d non-zero entries:\n", NNZ(B));
-    printMatrix(out, B);
+    printMatrix(out, W1);
+    fprintf(out, "\n");
 
-    // Perform and print matrix operations
-    Matrix C;
-
-    // (1.5) * A
-    C = scalarMult(1.5, A);
-    fprintf(out, "(1.5)*A =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // A + B
-    C = sum(A, B);
-    fprintf(out, "A+B =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // A + A
-    C = sum(A, A);
-    fprintf(out, "A+A =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // B - A
-    C = diff(B, A);
-    fprintf(out, "B-A =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // A - A
-    C = diff(A, A);
-    fprintf(out, "A-A =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // Transpose of A
-    C = transpose(A);
-    fprintf(out, "Transpose(A) =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // A * B
-    C = product(A, B);
-    fprintf(out, "A*B =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // B * B
-    C = product(B, B);
-    fprintf(out, "B*B =\n");
-    printMatrix(out, C);
-    freeMatrix(&C);
-
-    // Clean up
-    freeMatrix(&A);
-    freeMatrix(&B);
-
-    fclose(in);
-    fclose(out);
+    Matrix H0 = product(I, W1);
+    Matrix H1 = sigmoid(H0);
+    
+    printMatrix(out, H1);
+    fprintf(out, "\n");
 
     return 0;
 }
+

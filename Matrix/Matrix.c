@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "List.h"
 #include "Matrix.h"
 
-typedef struct EntryObj* Entry;
-typedef struct MatrixObj* Matrix;
+//typedef struct EntryObj* Entry;
+//typedef struct MatrixObj* Matrix;
+//typedef struct NeuralNetwork* NerualNetwork;
 
 typedef struct EntryObj {
     int column;
@@ -14,10 +16,12 @@ typedef struct EntryObj {
 } EntryObj;
 
 typedef struct MatrixObj {
+    int num_rows;
+    int num_cols;
     int size;
-    int NNZ;
-    List* rows;  
+    List* rows;
 } MatrixObj;
+
 
 Entry newEntry(int col, double value) {
     	Entry newEntry = malloc(sizeof(EntryObj));
@@ -33,46 +37,15 @@ void freeEntry(Entry* pE) {
     	}
 }
 
-double vectorDot(List P, List Q) {
-    if (P == NULL || Q == NULL) {
-        return 0.0;  // Return 0 ilist is NULL
-    }
+// --------------------------------------------------------------------
 
-    moveFront(P);
-    moveFront(Q);
-    double total = 0.0;
-
-    while (index(P) >= 0 && index(Q) >= 0) {
-        Entry entryP = (Entry)get(P);
-        Entry entryQ = (Entry)get(Q);
-
-        // Ensure entryQ are valid pointers before accessi their fields
-        if (entryP == NULL || entryQ == NULL) {
-            return 0.0;  // Avoi deointers
-        }
-
-        // Check if colns match
-        if (entryP->column == entryQ->column) {
-            total += entryP->value * entryQ->value;
-            moveNext(P);
-            moveNext(Q);
-        }
-        else if (entryP->column < entryQ->column) {
-            moveNext(P);  // Skip entryP
-        }
-        else {
-            moveNext(Q); 
-        }
-    }
-
-    return total;
-}
-
-Matrix newMatrix(int n){
+// newMatrix()
+Matrix newMatrix(int n, int m){
 	Matrix newMatrix = malloc(sizeof(MatrixObj));
-	
-	newMatrix->size = n;
-	newMatrix->NNZ = 0;
+
+	newMatrix->num_rows = n;
+	newMatrix->num_cols = m;
+    newMatrix->size = n * m;
 	newMatrix->rows = calloc(n + 1, sizeof(List));
 
 	for (int i = 1; i <= n; i++) {
@@ -82,9 +55,10 @@ Matrix newMatrix(int n){
 	return newMatrix;	
 }
 
+// freeMatrix()
 void freeMatrix(Matrix* pM){
 	if (pM != NULL && *pM != NULL) {
-		for (int i = 1; i <= (*pM)->size; i++) {
+		for (int i = 1; i <= (*pM)->num_rows; i++) {
             		List row = (*pM)->rows[i];
             		moveFront(row);
             		while (index(row) >= 0) {
@@ -100,79 +74,53 @@ void freeMatrix(Matrix* pM){
     	}
 }
 
-// Access functions
+// Access functions ----------------------------------------------------
 
-int size(Matrix M){
-	return M->size;
+// size()
+int size(Matrix M) {
+    return ( (M->num_rows)*(M->num_cols) );
 }
 
-int NNZ(Matrix M){
-	return M->NNZ;
+// equals()
+int equals(Matrix A, Matrix B);
+
+// Manipulation procedures --------------------------------------------
+
+// sigmoidf
+double sigmoidf(double x){
+    return 1.0f / (1.0f + expf(-x));
 }
 
+// sigmoid()
+Matrix sigmoid(Matrix M){
+    Matrix S = newMatrix(M->num_rows, M->num_cols);
+    for (int i = 1; i <= M->num_rows; i++){
+        for (int j = 1; j <= M->num_cols; j++){
+            double val = getEntry(M, i, j);
+            changeEntry(S, i, j, sigmoidf(val));
+        }
+    }
 
-int equals(Matrix A, Matrix B){
-	if (A->NNZ != B->NNZ || A->size != B->size) {
-		return 0;
-	}
-
-	for (int i = 1; i <= A->size; i++) {
-		List rowsofA = A->rows[i];
-		List rowsofB = B->rows[i];
-
-		moveFront(rowsofA);
-		moveFront(rowsofB);
-
-		// Skip rows if both are empty
-		if (length(rowsofA) == 0 && length(rowsofB) == 0) {
-			continue;
-		} else {
-			break;
-		}
-
-		// Check if row lengths differ
-		if (length(rowsofA) != length(rowsofB)) {
-			return 0;
-		}
-
-		// Compare each entry in the current row
-		while (index(rowsofA) >= 0 && index(rowsofB) >= 0) {
-			Entry entryA = (Entry)get(rowsofA);
-			Entry entryB = (Entry)get(rowsofB);
-
-			// Check for mismatch in column or value
-			if (entryA->column != entryB->column || entryA->value != entryB->value) {
-				return 0;
-			}
-
-			moveNext(rowsofA);
-			moveNext(rowsofB);
-		}
-
-		// Ensure both lists reached the end simultaneously
-		if (index(rowsofA) >= 0 || index(rowsofB) >= 0) {
-			return 0;
-		}
-	}
-
-	return 1;
+    return S;
 }
 
-
+// makeZero()
 void makeZero(Matrix M){
 	for (int i = 1; i <= M->size; i++) {
-        	List rowM = M->rows[i];
-        	moveFront(rowM);
-        	while (index(rowM) >= 0) {
-            		Entry tempEntry = (Entry)get(rowM);
-            		freeEntry(&tempEntry);
-            		moveNext(rowM);
-        	}
-        	clear(rowM);
-    	}
-    	M->NNZ = 0;
+        List rowM = M->rows[i];
+        moveFront(rowM);
+        while (index(rowM) >= 0){
+            Entry tempEntry = (Entry)get(rowM);
+            freeEntry(&tempEntry);
+            moveNext(rowM);
+        }
+        clear(rowM);
+    }
+    M->num_cols = 0;
+    M->num_rows = 0;
 }
 
+// changeEntry()
 void changeEntry(Matrix M, int i, int j, double x){
     List rowM = M->rows[i]; 
     moveFront(rowM);
@@ -185,7 +133,7 @@ void changeEntry(Matrix M, int i, int j, double x){
                 // Remove existing entry if x is 0
                 delete(rowM);
                 freeEntry(&tempEntry);
-                M->NNZ--;
+//                M->NNZ--;
             } else {
                 // Update the value without changing NNZ
                 tempEntry->value = x;
@@ -205,211 +153,179 @@ void changeEntry(Matrix M, int i, int j, double x){
         } else {
             append(rowM, new);
         }
-        M->NNZ++; // Increment NNZ for new non-zero entry
+//        M->NNZ++; // Increment NNZ for new non-zero entry
     }
 }
 
-// Matrix Arithmetic operations
+// Matrix Arithmetic operations ---------------------------------------
+// copy()
+Matrix copy(Matrix A);
 
-Matrix copy(Matrix A){
-	Matrix C = newMatrix(A->size);
-	
-	for (int i = 1; i <= A->size; i++) {
-        	List rowsofA = A->rows[i];
-        	moveFront(rowsofA);
-        	
-		while (index(rowsofA) >= 0) {
-        		Entry entryA = (Entry)get(rowsofA);
-            		changeEntry(C, i, entryA->column, entryA->value);
-            		moveNext(rowsofA);
-        	}
-
-    	}
-	C->NNZ = A->NNZ;
-    	return C;
-}
-
-
+// transpose()
 Matrix transpose(Matrix A){
-	Matrix MT = newMatrix(A->size);
-	
-	for(int i = 1; i <= A->size; i++){
-		List rowsofA = A->rows[i];
-		moveFront(rowsofA);
-		
-		while(index(rowsofA) >= 0){
-			Entry entryA = (Entry)get(rowsofA);
-			changeEntry(MT, entryA->column, i, entryA->value);
-			moveNext(rowsofA);
-		}
+    Matrix M = newMatrix(A->num_cols, A->num_rows);
 
-	}
-	MT->NNZ = A->NNZ;
-	//printf("NNZ after transpose: %d\n", MT->NNZ);
-	return MT;
-}
+    for (int i = 1; i <= A->num_rows; i++) {
+        List tempList = A->rows[i];
+        moveFront(tempList);
 
-Matrix scalarMult(double x, Matrix A){
-	Matrix M = newMatrix(A->size);
-    	
-	if (x == 0){
-		return M;
-	}
-	
-	for (int i = 1; i <= A->size; i++) {
-        	List rowsofA = A->rows[i];
-        	moveFront(rowsofA);
-        	
-		while (index(rowsofA) >= 0) {
-        		Entry entryA = (Entry)get(rowsofA);
-            		changeEntry(M, i, entryA->column, x * (double) entryA->value);
-            		moveNext(rowsofA);
-        	}
-
-    	}
-	printf("mult %d\n", M->NNZ);
-    	//printMatrix(stdout, M);
-	return M;
-
-}
-
-Matrix sum(Matrix A, Matrix B){
-	if(A->size != B->size){
-		fprintf(stderr, "Matrix error: calling sum on matrices sizes that do not match\n");
-		exit(EXIT_FAILURE);
-	}
-
-	Matrix S = newMatrix(A->size);
-    	for (int i = 1; i <= A->size; i++) {
-        	
-		List rowsofA = A->rows[i];
-        	List rowsofB = B->rows[i];
-        	
-		moveFront(rowsofA);
-        	moveFront(rowsofB);
-        	
-		while (index(rowsofA) >= 0 || index(rowsofB) >= 0) {
-            		if (index(rowsofA) >= 0 && index(rowsofB) >= 0) {
-
-				Entry entryA = (Entry)get(rowsofA);
-                		Entry entryB = (Entry)get(rowsofB);
-                		
-				if (entryA->column == entryB->column) {
-
-					changeEntry(S, i, entryA->column, entryA->value + entryB->value);
-                    			S->NNZ += 1;
-					moveNext(rowsofA);
-                    			moveNext(rowsofB);
-				}
-
-				else if (entryA->column < entryB->column) {
-					changeEntry(S, i, entryA->column, entryA->value);
-                    			S->NNZ -= 1;
-					moveNext(rowsofA);
-                		}
-
-				else{
-                    			changeEntry(S, i, entryB->column, entryB->value);
-					moveNext(rowsofB);
-                		}
-            		}
-
-			else if (index(rowsofA) >= 0) {
-                		Entry entryA = (Entry)get(rowsofA);
-                		changeEntry(S, i, entryA->column, entryA->value);
-                		S->NNZ -= 1;
-				moveNext(rowsofA);
-            		}
-
-			else {
-                		Entry entryB = (Entry)get(rowsofB);
-                		changeEntry(S, i, entryB->column, entryB->value);
-				moveNext(rowsofB);
-				
-            		}
-        	}
-    	}
-	printf("Sum nnz %d\n", S->NNZ);
-    	return S;
-}
-
-Matrix diff(Matrix A, Matrix B){
-    if (A->size != B->size) {
-        fprintf(stderr, "Matrix error: calling diff on matrices of different sizes\n");
-        exit(EXIT_FAILURE);
-    }
-
-    Matrix diff = newMatrix(A->size);
-    for (int i = 1; i <= A->size; i++) {
-        List rowsofA = A->rows[i];
-        List rowsofB = B->rows[i];
-        moveFront(rowsofA);
-        moveFront(rowsofB);
-
-        while (index(rowsofA) >= 0 || index(rowsofB) >= 0) {
-            if (index(rowsofA) >= 0 && index(rowsofB) >= 0) {
-                Entry entryA = (Entry)get(rowsofA);
-                Entry entryB = (Entry)get(rowsofB);
-
-                if (entryA->column == entryB->column) {
-                    double diffValue = entryA->value - entryB->value;
-                    if (diffValue != 0) {
-                        changeEntry(diff, i, entryA->column, diffValue);
-                    }
-                    moveNext(rowsofA);
-                    moveNext(rowsofB);
-                } else if (entryA->column < entryB->column) {
-                    changeEntry(diff, i, entryA->column, entryA->value);
-                    moveNext(rowsofA);
-                } else {
-                    changeEntry(diff, i, entryB->column, -entryB->value);
-                    moveNext(rowsofB);
-                }
-            } else if (index(rowsofA) >= 0) {
-                Entry entryA = (Entry)get(rowsofA);
-                changeEntry(diff, i, entryA->column, entryA->value);
-                moveNext(rowsofA);
-            } else {
-                Entry entryB = (Entry)get(rowsofB);
-                changeEntry(diff, i, entryB->column, -entryB->value);
-                moveNext(rowsofB);
-            }
+        while (index(tempList) >= 0) {
+            Entry tempE = (Entry)get(tempList);
+            
+            changeEntry(M, tempE->column, i, tempE->value);
+            moveNext(tempList);
         }
     }
-    return diff;
+
+    return M;
 }
 
+// scalarMult()
+Matrix scalarMult(double x, Matrix A){
+    Matrix S = newMatrix(A->num_rows, A->num_cols);
 
-Matrix product(Matrix A, Matrix B){	
-	Matrix P = newMatrix(A->size);
- 	Matrix T = transpose(B);
-    
-    	for (int i = 1; i <= A->size; i++) {
-		if (NNZ(A) == 0) continue;
-        
-        	for (int j = 1; j <= B->size; j++) {
-            		double dotProd = vectorDot(A->rows[i], T->rows[j]);
-            		if (dotProd != 0) {
-                		changeEntry(P, i, j, dotProd);
-            		}
-        	}
-    	}
-    	freeMatrix(&T);
-    	return P;
+    for (int i = 1; i <= A->num_rows; i++){
+        for (int j = 1; j <= A->num_cols; j++){
+            double eVal = getEntry(A, i, j);
+            changeEntry(S, i, j, eVal * x);
+        }
+    }
+
+    return S;
 }
 
+// sum()
+Matrix sum(Matrix A, Matrix B);
+
+// diff()
+Matrix diff(Matrix A, Matrix B);
+
+// product()
+Matrix product(Matrix A, Matrix B){
+    if (A->num_cols != B->num_rows){
+        fprintf(stderr, "product: invalid shape (%d, %d)\n", A->num_cols, B->num_rows);
+    }
+
+    Matrix P = newMatrix(A->num_rows, B->num_cols);
+    for (int i = 1; i <= A->num_rows; i++){
+        for (int j = 1; j <= B->num_cols; j++){
+            List rowiA = A->rows[i];
+            List coljB = getColRow(B, j);
+            double dotProd = vectorDot(rowiA, coljB);
+            changeEntry(P, i, j, dotProd);
+        }
+    }
+
+    return P;
+}
+
+// printMatrix()
 void printMatrix(FILE* out, Matrix M){
-	for (int i = 1; i <= M->size; i++) {
+	for (int i = 1; i <= M->num_rows; i++) {
         	List row = M->rows[i];
         	if (length(row) == 0) continue;
-
+            
         	fprintf(out, "%d: ", i);
         	moveFront(row);
         	while (index(row) >= 0) {
             		Entry e = (Entry)get(row);
-            		fprintf(out, "(%d, %.1f) ", e->column, e->value);
+                    if (isInteger(e->value)){
+                        fprintf(out, "(%d, %1.0g) ", e->column, e->value);
+                    } else {
+                        fprintf(out, "(%d, %.8g) ", e->column, e->value);
+                    }
             		moveNext(row);
         	}
         	fprintf(out, "\n");
     	}
 }
+
+// isInteger()
+int isInteger(float num) {
+    return (num == (int) num); 
+}
+
+// getEntry()
+double getEntry(Matrix M, int i, int j){
+    if (M->num_rows < i || M->num_cols < j){
+        fprintf(stderr, "getEntry: invalid index (%d, %d)\n", i, j);
+        exit(EXIT_FAILURE);
+    }
+
+    List rowM = M->rows[i];
+    moveFront(rowM);
+
+    while (index(rowM) >= 0) {
+        Entry e = (Entry)get(rowM);
+        if (e->column == j) {
+            return e->value;
+        }
+        moveNext(rowM);
+    }
+
+    return 0.0; // If not found, treat as zero
+}
+
+// vectorDot()
+double vectorDot(List P, List Q){
+    if (length(P) != length(Q)){
+        fprintf(stderr, "vectorDot: invalid shape (%d, %d)\n", length(P), length(Q));
+        exit(EXIT_FAILURE);
+    }
+
+    moveFront(P);
+    moveFront(Q);
+
+    double total = 0;
+
+    while (index(P) >= 0 && index(Q) >= 0) {
+        Entry eP = (Entry)get(P);
+        Entry eQ = (Entry)get(Q);
+
+        if (eP->column == eQ->column) {
+            total += eP->value * eQ->value;
+            moveNext(P);
+            moveNext(Q);
+        } else if (eP->column < eQ->column) {
+            moveNext(P);
+        } else {
+            moveNext(Q);
+        }
+    }
+
+    return total;
+}
+
+// getRow()
+List getRow(Matrix M, int i) {
+    return M->rows[i];
+}
+
+// getColRow()
+List getColRow(Matrix M, int j){
+    List newL = newList();  // allocate new list for column j as a row
+
+    for (int k = 1; k <= M->num_rows; k++) {  // matrix is 1-indexed
+        List tempList = M->rows[k];
+        moveFront(tempList);
+
+        while (index(tempList) >= 0) {
+            Entry ek = (Entry)get(tempList);
+            if (ek->column == j) {
+                // Create a copy of the entry to avoid aliasing
+                Entry newE = newEntry(k, ek->value);  // column ← row index
+                append(newL, newE);
+                break; // only one entry per column in each row
+            }
+            moveNext(tempList);
+        }
+    }
+
+    return newL;
+}
+
+// vectorSum()
+double vectorSum(List P, List Q);
+
+
+//#endif // MATRIX_H_INCLUDE_
