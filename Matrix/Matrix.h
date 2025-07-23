@@ -26,6 +26,10 @@ void freeMatrix(Matrix* pM);
 
 // Access functions ----------------------------------------------------
 
+// isInteger()
+// Return true (1) if float num is an integer, false (0) otherwise.
+int isInteger(float num);
+
 // size()
 // Return the size of square Matrix M.
 int size(Matrix M);
@@ -53,12 +57,24 @@ void makeZero(Matrix M);
 // Pre: 1<=i<=size(M), 1<=j<=size(M)
 void changeEntry(Matrix M, int i, int j, double x);
 
+// getEntry() 
+// gets the ith row, jth column of M to.
+double getEntry(Matrix M, int i, int j);
+
+// vectorDot()
+// dotProduct of List P and List Q.
+// Pre: length(P) == length(Q)
+double vectorDot(List P, List Q);
+
+// vectorSum()
+// elementwise addition of List P and List Q.
+// Pre: length(P) == length(Q)
+double vectorSum(List P, List Q);
+
 // Matrix Arithmetic operations ---------------------------------------
 // copy()
 // Returns a reference to a new Matrix object having the same entries as A.
 Matrix copy(Matrix A);
-
-int isInteger(float num);
 
 // transpose()
 // Returns a reference to a new Matrix object representing the transpose
@@ -84,10 +100,6 @@ Matrix diff(Matrix A, Matrix B);
 // pre: size(A)==size(B)
 Matrix product(Matrix A, Matrix B);
 
-List getRow(Matrix M, int i);  // controlled access to row[i]
-
-List getColRow(Matrix M, int);   // turn col to row
-
 // printMatrix()
 // Prints a string representation of Matrix M to filestream out. Zero rows
 // are not printed. Each non-zero row is represented as one line consisting
@@ -96,11 +108,14 @@ List getColRow(Matrix M, int);   // turn col to row
 // in that row. The double val will be rounded to 1 decimal point.
 void printMatrix(FILE* out, Matrix M);
 
-double getEntry(Matrix M, int i, int j);
+// List Arithmetic operations ---------------------------------------
+// getRow()
+// returns a reference to a new List object representing M->rows[i]
+List getRow(Matrix M, int i); 
 
-double vectorDot(List P, List Q);
-
-double vectorSum(List P, List Q);
+// getColRow()
+// returns a reference to a new List object representing M->col[j]
+List getColRow(Matrix M, int);  
 
 
 #endif // MATRIX_H_INCLUDE_

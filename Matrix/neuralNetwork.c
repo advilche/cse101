@@ -45,7 +45,6 @@ void freeEntry(Entry* pE) {
 // --------------------------------------------------------------------
 
 // newMatrix()
-// Returns a reference to a new mXn Matrix object in the zero state.
 Matrix newMatrix(int n, int m){
 	Matrix newMatrix = malloc(sizeof(MatrixObj));
 
@@ -62,7 +61,6 @@ Matrix newMatrix(int n, int m){
 }
 
 // freeMatrix()
-// Frees heap memory associated with *pM, sets *pM to NULL.
 void freeMatrix(Matrix* pM){
 	if (pM != NULL && *pM != NULL) {
 		for (int i = 1; i <= (*pM)->num_rows; i++) {
@@ -84,26 +82,21 @@ void freeMatrix(Matrix* pM){
 // Access functions ----------------------------------------------------
 
 // size()
-// Return the size of Matrix M (mxn)
 int size(Matrix M) {
     return ( (M->num_rows)*(M->num_cols) );
 }
 
 // equals()
-// Return true (1) if matrices A and B are equal, false (0) otherwise.
 int equals(Matrix A, Matrix B);
 
 // Manipulation procedures --------------------------------------------
 
 // sigmoidf
-// Returns the value of 1/(1+e^(-x))
 double sigmoidf(double x){
     return 1.0f / (1.0f + expf(-x));
 }
 
 // sigmoid()
-// Returns a reference to a new Matrix object representing the sigmoid
-// of M
 Matrix sigmoid(Matrix M){
     Matrix S = newMatrix(M->num_rows, M->num_cols);
     for (int i = 1; i <= M->num_rows; i++){
@@ -117,8 +110,6 @@ Matrix sigmoid(Matrix M){
 }
 
 // makeZero()
-// Re-sets M to the zero Matrix state.
-// rows & cols reset to 0
 void makeZero(Matrix M){
 	for (int i = 1; i <= M->size; i++) {
         List rowM = M->rows[i];
@@ -135,8 +126,6 @@ void makeZero(Matrix M){
 }
 
 // changeEntry()
-// Changes the ith row, jth column of M to the value x.
-// Pre: 1<=i<=size(M), 1<=j<=size(M)
 void changeEntry(Matrix M, int i, int j, double x){
     List rowM = M->rows[i]; 
     moveFront(rowM);
@@ -175,12 +164,9 @@ void changeEntry(Matrix M, int i, int j, double x){
 
 // Matrix Arithmetic operations ---------------------------------------
 // copy()
-// Returns a reference to a new Matrix object having the same entries as A.
 Matrix copy(Matrix A);
 
 // transpose()
-// Returns a reference to a new Matrix object representing the transpose
-// of A.
 Matrix transpose(Matrix A){
     Matrix M = newMatrix(A->num_cols, A->num_rows);
 
@@ -200,7 +186,6 @@ Matrix transpose(Matrix A){
 }
 
 // scalarMult()
-// Returns a reference to a new Matrix object representing xA.
 Matrix scalarMult(double x, Matrix A){
     Matrix S = newMatrix(A->num_rows, A->num_cols);
 
@@ -215,18 +200,12 @@ Matrix scalarMult(double x, Matrix A){
 }
 
 // sum()
-// Returns a reference to a new Matrix object representing A+B.
-// pre: size(A)==size(B)
 Matrix sum(Matrix A, Matrix B);
 
 // diff()
-// Returns a reference to a new Matrix object representing A-B.
-// pre: size(A)==size(B)
 Matrix diff(Matrix A, Matrix B);
 
 // product()
-// Returns a reference to a new Matrix object representing AB
-// pre: size(A->cols)==size(B->rows)
 Matrix product(Matrix A, Matrix B){
     if (A->num_cols != B->num_rows){
         fprintf(stderr, "product: invalid shape (%d, %d)\n", A->num_cols, B->num_rows);
@@ -245,15 +224,7 @@ Matrix product(Matrix A, Matrix B){
     return P;
 }
 
-
 // printMatrix()
-// Prints a string representation of Matrix M to filestream out. Zero rows
-// are not printed. Each non-zero row is represented as one line consisting
-// of the row number, followed by a colon, a space, then a space separated
-// list of pairs "(col, val)" giving the column numbers and non-zero values
-// in that row. The double val will be rounded to 1 decimal point.
-// void printMatrix(FILE* out, Matrix M);
-
 void printMatrix(FILE* out, Matrix M){
 	for (int i = 1; i <= M->num_rows; i++) {
         	List row = M->rows[i];
@@ -274,10 +245,12 @@ void printMatrix(FILE* out, Matrix M){
     	}
 }
 
+// isInteger()
 int isInteger(float num) {
     return (num == (int) num); 
 }
 
+// getEntry()
 double getEntry(Matrix M, int i, int j){
     if (M->num_rows < i || M->num_cols < j){
         fprintf(stderr, "getEntry: invalid index (%d, %d)\n", i, j);
@@ -298,7 +271,7 @@ double getEntry(Matrix M, int i, int j){
     return 0.0; // If not found, treat as zero
 }
 
-
+// vectorDot()
 double vectorDot(List P, List Q){
     if (length(P) != length(Q)){
         fprintf(stderr, "vectorDot: invalid shape (%d, %d)\n", length(P), length(Q));
@@ -328,11 +301,12 @@ double vectorDot(List P, List Q){
     return total;
 }
 
-
+// getRow()
 List getRow(Matrix M, int i) {
     return M->rows[i];
 }
 
+// getColRow()
 List getColRow(Matrix M, int j){
     List newL = newList();  // allocate new list for column j as a row
 
@@ -355,6 +329,7 @@ List getColRow(Matrix M, int j){
     return newL;
 }
 
+// vectorSum()
 double vectorSum(List P, List Q);
 
 

@@ -5,7 +5,6 @@
 #include "Matrix.h"
 #include "List.h"
 
-
 typedef struct EntryObj {
     int column;
     double value;

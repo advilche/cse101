@@ -118,32 +118,6 @@ void* get(List L){
 	return L->cursor->data; // look at dis later
 }
 
-
-/**
-bool equals(List A, List B){
-	if (A == NULL || B == NULL) {
-        	printf("List Error: calling equals() on NULL List reference\n");
-        	exit(EXIT_FAILURE);
-	}
-
-    	if (A->length != B->length){
-		return false;
-	}
-
-    	Node NodeA = A->front;
-    	Node NodeB = B->front;
-    	while (NodeA != NULL) {
-        	if (NodeA->data != NodeB->data){
-			return false;
-		}
-        	NodeA = NodeA->next;
-        	NodeB = NodeB->next;
-    	}
-	return true;
-
-}
-**/
-
 // Manipulation procedures ----------------------------------------------------
 
 void clear(List L){
