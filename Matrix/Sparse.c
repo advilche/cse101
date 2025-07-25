@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "Matrix.h"
 #include "List.h"
+#include "NeuralNetworks.h"
+
+#define SIZE_OF_ARR(arr) sizeof(arr)/sizeof(arr[0]);
 
 typedef struct EntryObj {
     int column;
@@ -11,6 +15,8 @@ typedef struct EntryObj {
 } EntryObj;
 
 int main(int argc, char *argv[]){
+    srand(time(NULL));                     // random seed
+
     // Ensure proper number of arguments
     if (argc != 3) {
         printf("Usage: %s <inputfile> <outputfile>\n", argv[0]);
@@ -56,10 +62,26 @@ int main(int argc, char *argv[]){
 
     Matrix H0 = product(I, W1);
     Matrix H1 = sigmoid(H0);
-    
+
     printMatrix(out, H1);
     fprintf(out, "\n");
 
+    int nn_arch[] = {2, 1, 2, 3};
+    int num_layers = sizeof(nn_arch) / sizeof(nn_arch[0]);
+    NeuralNetwork NN = newRandNeuralNetwork(num_layers, nn_arch, 0, 5);
+
+    fprintf(stdout, "NN:\n");
+    printNN(stdout, NN);
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "X:\n");
+    Matrix X = newRandMatrix(2, 1, 0, 1);
+    printMatrix(stdout, X);
+
+    fprintf(stdout, "\n");
+    fprintf(stdout, "W^1*X:\n");
+    printMatrix(stdout, product(getWeight(NN, 0), X));
+    
     return 0;
 }
 

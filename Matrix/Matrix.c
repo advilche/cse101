@@ -22,7 +22,6 @@ typedef struct MatrixObj {
     List* rows;
 } MatrixObj;
 
-
 Entry newEntry(int col, double value) {
     	Entry newEntry = malloc(sizeof(EntryObj));
     	newEntry->column = col;
@@ -55,6 +54,27 @@ Matrix newMatrix(int n, int m){
 	return newMatrix;	
 }
 
+Matrix newRandMatrix(int n, int m, float min, float max){
+	Matrix newMatrix = malloc(sizeof(MatrixObj));
+
+	newMatrix->num_rows = n;
+	newMatrix->num_cols = m;
+    newMatrix->size = n * m;
+	newMatrix->rows = calloc(n + 1, sizeof(List));
+
+	for (int i = 1; i <= n; i++) {
+        	newMatrix->rows[i] = newList();
+    	}
+
+    for (int i = 1; i <= n; i++){
+        for (int j = 1;  j <= m; j++){
+            changeEntry(newMatrix, i, j, randomInRange(min, max));
+        }
+    }
+
+	return newMatrix;	
+}
+
 // freeMatrix()
 void freeMatrix(Matrix* pM){
 	if (pM != NULL && *pM != NULL) {
@@ -75,6 +95,11 @@ void freeMatrix(Matrix* pM){
 }
 
 // Access functions ----------------------------------------------------
+
+float randomInRange(int min, int max){
+    float val = (float) rand() / (float) RAND_MAX;
+    return min + val * (max - min);
+}
 
 // size()
 int size(Matrix M) {
@@ -195,7 +220,22 @@ Matrix scalarMult(double x, Matrix A){
 }
 
 // sum()
-Matrix sum(Matrix A, Matrix B);
+Matrix sum(Matrix A, Matrix B){
+    if (A->num_cols != B->num_cols || A->num_rows != B->num_rows){
+        fprintf(stderr, "sum: invalid shape, colsA = (%d) != colsB = (%d) || rowsA = (%d) != rowsB = (%d)", A->num_cols, B->num_cols, A->num_rows, B->num_rows);
+    }
+
+    Matrix S = newMatrix(A->num_rows, B->num_cols);
+        for (int i = 1; i <= A->num_rows; i++){
+            for (int j = 1; j <= B->num_cols; j++){
+                double Aij = getEntry(A, i, j);
+                double Bij = getEntry(B, i, j);
+                changeEntry(S, i, j, Aij + Bij);
+            }
+        }
+
+    return S;
+}
 
 // diff()
 Matrix diff(Matrix A, Matrix B);

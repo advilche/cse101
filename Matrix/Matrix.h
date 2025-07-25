@@ -13,19 +13,21 @@
 
 typedef struct EntryObj* Entry;
 typedef struct MatrixObj* Matrix;
-typedef struct NeuralNetwork* NerualNetwork;
 
 // --------------------------------------------------------------------
 
 // newMatrix()
 // Returns a reference to a new mXn Matrix object in the zero state.
 Matrix newMatrix(int n, int m);
+Matrix newRandMatrix(int n, int m, float min, float max);
 
 // freeMatrix()
 // Frees heap memory associated with *pM, sets *pM to NULL.
 void freeMatrix(Matrix* pM);
 
 // Access functions ----------------------------------------------------
+
+float randomInRange(int min, int max);
 
 // isInteger()
 // Return true (1) if float num is an integer, false (0) otherwise.
