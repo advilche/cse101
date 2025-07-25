@@ -116,6 +116,14 @@ double sigmoidf(double x){
     return 1.0f / (1.0f + expf(-x));
 }
 
+int getNumCols(Matrix M){
+    return M->num_cols;
+}
+
+int getNumRows(Matrix M){
+    return M->num_rows;
+}
+
 // sigmoid()
 Matrix sigmoid(Matrix M){
     Matrix S = newMatrix(M->num_rows, M->num_cols);

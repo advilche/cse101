@@ -54,19 +54,7 @@ int main(int argc, char *argv[]){
         changeEntry(W1, row, col, value);
     }
 
-    printMatrix(out, I);
-    fprintf(out, "\n");
-
-    printMatrix(out, W1);
-    fprintf(out, "\n");
-
-    Matrix H0 = product(I, W1);
-    Matrix H1 = sigmoid(H0);
-
-    printMatrix(out, H1);
-    fprintf(out, "\n");
-
-    int nn_arch[] = {2, 1, 2, 3};
+    int nn_arch[] = {1, 1};
     int num_layers = sizeof(nn_arch) / sizeof(nn_arch[0]);
     NeuralNetwork NN = newRandNeuralNetwork(num_layers, nn_arch, 0, 5);
 
@@ -74,15 +62,20 @@ int main(int argc, char *argv[]){
     printNN(out, NN);
     fprintf(out, "\n");
 
-    fprintf(out, "X:\n");
-    Matrix X = newRandMatrix(2, 1, 0, 1);
-    printMatrix(out, X);
+    fprintf(out, "X_in:\n");
+    Matrix X_in = newRandMatrix(1, 1, -1, 1);
+    changeEntry(X_in, 1, 1, 1);
+    printMatrix(out, X_in);
+
+    fprintf(out, "X_out:\n");
+    Matrix X_out = newRandMatrix(1, 1, -1, 2);
+    changeEntry(X_out, 1, 1, 2);
+    printMatrix(out, X_out);
 
     fprintf(out, "\n");
     fprintf(out, "W^1*X:\n");       
-    Matrix P = product(getWeight(NN, 0), X);
+    Matrix P = product(getWeight(NN, 0), X_in);
     printMatrix(out, P);
-
 
     fprintf(out, "\n");
     fprintf(out, "B:\n");
@@ -96,6 +89,9 @@ int main(int argc, char *argv[]){
     Matrix sig = sigmoid(sum1);
     printMatrix(out, sig); // o(WX+B)
 
+    fprintf(out, "%f\n", meanSquaredError(sig, X_out));  
+    fprintf(out, "Expected: %.8f\n", getEntry(X_out, 1, 1));
+    fprintf(out, "Actual:   %.8f\n", getEntry(sig, 1, 1));
 
     return 0;
 }

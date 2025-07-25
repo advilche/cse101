@@ -70,5 +70,25 @@ void printNN(FILE* out, NeuralNetwork NN){
     }
 }
 
-double meanSquaredError(Matrix output, Matrix target);
 
+double meanSquaredError(Matrix output, Matrix target){
+    if (getNumCols(output) != getNumCols(target) || getNumRows(output) != getNumRows(target)){
+        fprintf(stderr, "outputCols: %d, targerCols: %d, outputRows: %d, targetRows: %d, ", getNumCols(output), getNumCols(target), getNumRows(output), getNumRows(target));
+        exit(EXIT_FAILURE);
+    }
+
+    double cost = 0;
+
+    for (int i = 1; i <= getNumRows(output); i++){
+        for (int j = 1; j <= getNumCols(target); j++){
+            double expected = getEntry(target, i, j);
+            double actual   = getEntry(output, i, j);
+            double diff = expected - actual;
+            cost += diff * diff;
+        }
+    }
+
+    cost /= (getNumRows(target) * getNumCols(target));
+
+    return cost;
+}

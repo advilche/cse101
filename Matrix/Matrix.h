@@ -51,6 +51,9 @@ int equals(Matrix A, Matrix B);
 // Puts values through sigmoid function
 Matrix sigmoid(Matrix M);
 
+int getNumCols(Matrix M);
+int getNumRows(Matrix M);
+
 // makeZero()
 // Re-sets M to the zero Matrix state.
 void makeZero(Matrix M);
