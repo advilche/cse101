@@ -70,18 +70,33 @@ int main(int argc, char *argv[]){
     int num_layers = sizeof(nn_arch) / sizeof(nn_arch[0]);
     NeuralNetwork NN = newRandNeuralNetwork(num_layers, nn_arch, 0, 5);
 
-    fprintf(stdout, "NN:\n");
-    printNN(stdout, NN);
-    fprintf(stdout, "\n");
+    fprintf(out, "NN:");
+    printNN(out, NN);
+    fprintf(out, "\n");
 
-    fprintf(stdout, "X:\n");
+    fprintf(out, "X:\n");
     Matrix X = newRandMatrix(2, 1, 0, 1);
-    printMatrix(stdout, X);
+    printMatrix(out, X);
 
-    fprintf(stdout, "\n");
-    fprintf(stdout, "W^1*X:\n");
-    printMatrix(stdout, product(getWeight(NN, 0), X));
-    
+    fprintf(out, "\n");
+    fprintf(out, "W^1*X:\n");       
+    Matrix P = product(getWeight(NN, 0), X);
+    printMatrix(out, P);
+
+
+    fprintf(out, "\n");
+    fprintf(out, "B:\n");
+    Matrix B = newRandMatrix(1, 1, -1, 1);
+    printMatrix(out, B);
+
+    Matrix sum1 = sum(P, B); // WX+B = sum
+
+    fprintf(out, "\n");
+    fprintf(out, "Sig:\n");
+    Matrix sig = sigmoid(sum1);
+    printMatrix(out, sig); // o(WX+B)
+
+
     return 0;
 }
 
