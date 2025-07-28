@@ -269,6 +269,7 @@ Matrix product(Matrix A, Matrix B){
 
 // printMatrix()
 void printMatrix(FILE* out, Matrix M){
+    fprintf(out, "\n");
 	for (int i = 1; i <= M->num_rows; i++) {
         	List row = M->rows[i];
         	if (length(row) == 0) continue;

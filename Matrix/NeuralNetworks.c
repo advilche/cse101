@@ -11,6 +11,8 @@ struct NeuralNetworkObj {
     int output_size;
 
     Matrix* weights;
+    // Matrix* biases. num_layers - 1
+                        
 };
 
 int* hidden_size(int* layer_sizes, int size) {
@@ -53,7 +55,7 @@ NeuralNetwork newRandNeuralNetwork(int num_layers, int* nn_arch, int min, int ma
     return NN;
 }
 
-Matrix getWeight(NeuralNetwork NN, int i) {
+Matrix getWeight(NeuralNetwork NN, int i) { // weight of layer i
     return NN->weights[i];
 }
 
@@ -63,15 +65,14 @@ void randomizeWeights(NeuralNetwork NN, float min, float max);
 
 Matrix forward(NeuralNetwork NN, Matrix input);
 
-void printNN(FILE* out, NeuralNetwork NN){
+void printNN(FILE* out, NeuralNetwork NN) {
     for (int i = 0; i < NN->num_layers - 1; i++){
-        fprintf(out, "\n");
         printMatrix(out, NN->weights[i]);
     }
 }
 
 
-double meanSquaredError(Matrix output, Matrix target){
+double meanSquaredError(Matrix target, Matrix output){
     if (getNumCols(output) != getNumCols(target) || getNumRows(output) != getNumRows(target)){
         fprintf(stderr, "outputCols: %d, targerCols: %d, outputRows: %d, targetRows: %d, ", getNumCols(output), getNumCols(target), getNumRows(output), getNumRows(target));
         exit(EXIT_FAILURE);

@@ -125,3 +125,37 @@ List getColRow(Matrix M, int);
 
 
 #endif // MATRIX_H_INCLUDE_
+
+/*
+
+    FILE* in = fopen(argv[1], "r");
+
+
+    if (in == NULL || out == NULL) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    int m, n, m1, n1, a, b;
+
+    fscanf(in, "%d %d %d %d %d %d", &m, &n, &m1, &n1, &a, &b);
+    printf("%d, %d, %d, %d, %d, %d\n", m, n, m1, n1, a, b);
+
+    // Create matrices A & B
+    Matrix I = newMatrix(m, n);
+    Matrix W1 = newMatrix(m1, n1);
+
+    for (int i = 0; i < a; i++) {
+        int row, col;
+        double value;
+        fscanf(in, "%d %d %lf", &row, &col, &value);
+        changeEntry(I, row, col, value);
+    }
+
+    for (int i = 0; i < b; i++) {
+        int row, col;
+        double value;
+        fscanf(in, "%d %d %lf", &row, &col, &value);
+        changeEntry(W1, row, col, value);
+    }
+*/
