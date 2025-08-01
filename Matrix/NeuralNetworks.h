@@ -7,6 +7,11 @@ typedef struct NeuralNetworkObj* NeuralNetwork;
 
 int* hidden_size(int* layer_sizes, int size);
 Matrix getWeight(NeuralNetwork NN, int layer_index);
+Matrix getBias(NeuralNetwork NN, int layer_index);
+//Matrix epsilon(Matrix input, double eps);
+void add_by_epsilon(Matrix input, double eps);
+void mult_by_epsilon(Matrix input, double eps);
+
 
 // Constructor / Destructor
 NeuralNetwork newNeuralNetwork(int num_layers, int* layer_sizes);

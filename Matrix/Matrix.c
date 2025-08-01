@@ -192,7 +192,22 @@ void changeEntry(Matrix M, int i, int j, double x){
 
 // Matrix Arithmetic operations ---------------------------------------
 // copy()
-Matrix copy(Matrix A);
+Matrix copy(Matrix A){
+    Matrix C = newMatrix(A->num_rows, A->num_cols);
+    
+    for (int i = 1; i <= A->num_rows; i++) {
+        List rowsofA = A->rows[i];
+        moveFront(rowsofA);
+        
+        while (index(rowsofA) >= 0) {
+            Entry entryA = (Entry)get(rowsofA);
+            changeEntry(C, i, entryA->column, entryA->value);
+            moveNext(rowsofA);
+        }
+    }
+    
+    return C;
+}
 
 // transpose()
 Matrix transpose(Matrix A){
